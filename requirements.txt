@@ -13,4 +13,6 @@ bs4
 transformers
 scikit-learn
 pandas
+torch
+lxml
 

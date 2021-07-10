@@ -35,7 +35,7 @@ dag = DAG(
     'ml_pipeline',
     default_args=default_args,
     description='A simple Machine Learning pipeline',
-    schedule_interval=timedelta(days=30),
+    schedule_interval="@weekly",
 )
 
 # instantiate tasks using Operators.
