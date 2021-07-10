@@ -87,6 +87,9 @@ def train_epoch(epoch, model, data_loader, optimizer, scheduler):
       optimizer.step()
       scheduler.step()
 
+      if i % 10 == 0:
+          print("Train batch:{}, loss:{}".format(i, loss))
+
     epoch_loss = running_loss / len(data_loader.dataset)
     print("Train epoch:{}, loss:{}".format(epoch, epoch_loss))
     precision, recall, fscore, _ = precision_recall_fscore_support(true_labels, predictions, average='macro')
