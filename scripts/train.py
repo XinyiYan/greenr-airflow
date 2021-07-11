@@ -127,7 +127,7 @@ if __name__ == "__main__":
 
     # training parameter
     batch_size = 8
-    epochs = 4
+    epochs = 1
 
     bert_tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

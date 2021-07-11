@@ -9,7 +9,7 @@ from airflow.utils.dates import days_ago
 default_args = {
     'owner': 'Binh Phan',
     'depends_on_past': False,
-    'start_date': days_ago(8),
+    'start_date': datetime(2021, 7, 1),
     'email': ['example@example.com'],
     'email_on_failure': False,
     'email_on_retry': False,
@@ -34,8 +34,9 @@ default_args = {
 dag = DAG(
     'ml_pipeline',
     default_args=default_args,
+    catchup=False,
     description='A simple Machine Learning pipeline',
-    schedule_interval="@weekly",
+    schedule_interval="@hourly",
 )
 
 # instantiate tasks using Operators.
@@ -66,4 +67,4 @@ serve = BashOperator(
 
 #sets the ordering of the DAG. The >> directs the 2nd task to run after the 1st task. This means that
 #download images runs first, then train, then serve.
-download_images >> train >> serve
+download_images >> train #>> serve
