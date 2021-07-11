@@ -23,7 +23,7 @@ ENV LANGUAGE en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 ENV LC_CTYPE en_US.UTF-8
-ENV LC_MESSAGES en_US.UTF-8
+ENV LC_MESSAGES en_US.UTF-8 
 
 RUN set -ex \
     && buildDeps=' \
@@ -75,11 +75,16 @@ RUN set -ex \
 
 COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
 COPY requirements.txt requirements.txt
-RUN pip install git+https://github.com/fastai/fastai.git
+#RUN pip install git+https://github.com/fastai/fastai.git
+RUN pip install --upgrade google-cloud-storage
 RUN pip install -r requirements.txt
 COPY dags ${AIRFLOW_USER_HOME}/dags
 COPY data ${AIRFLOW_USER_HOME}/data
 COPY scripts ${AIRFLOW_USER_HOME}/scripts
+COPY models ${AIRFLOW_USER_HOME}/models
+COPY keys ${AIRFLOW_USER_HOME}/keys
+ENV GOOGLE_APPLICATION_CREDENTIALS=${AIRFLOW_USER_HOME}/keys/famous-modem-318621-9c3f46fc139a.json
+
 # Install required libraries
 EXPOSE 8008 8080
 #USER airflow

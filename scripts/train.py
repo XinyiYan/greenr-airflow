@@ -7,6 +7,7 @@ from transformers import BertTokenizer, BertForSequenceClassification, AdamW, ge
 from sklearn.metrics import classification_report, precision_recall_fscore_support
 from sklearn.model_selection import KFold, train_test_split
 from process_data import preprocess_text, get_text_processor
+from bucket_service import upload_blob
 
 class textData(data.Dataset):
     def __init__(self, text, attens, labels=None):
@@ -87,7 +88,7 @@ def train_epoch(epoch, model, data_loader, optimizer, scheduler):
       optimizer.step()
       scheduler.step()
 
-      if i % 100 == 0:
+      if i % 200 == 0:
           print("Train batch:{}, loss:{}".format(i, loss))
 
     epoch_loss = running_loss / len(data_loader.dataset)
@@ -127,7 +128,7 @@ if __name__ == "__main__":
 
     # training parameter
     batch_size = 8
-    epochs = 1
+    epochs = 4
 
     bert_tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -160,13 +161,16 @@ if __name__ == "__main__":
     scheduler = get_linear_schedule_with_warmup(optimizer = optimizer, num_warmup_steps = warmup_steps, num_training_steps = total_steps)
 
     best_f1 = 0.0
+    best_model_path = ""
     for i in range(epochs):
         train_epoch(i, bert_model, train_loader, optimizer, scheduler)
         epoch_loss, fscore = evaluate_epoch(i, bert_model, val_loader)
 
         if fscore > best_f1:
             best_f1 = fscore
+            best_model_path = '/usr/local/airflow/models/best_model_f1_{:.8f}_{}.pth'.format(fscore, i)
+            torch.save(bert_model.state_dict(), best_model_path)
             print("Model saved!")
-            torch.save(bert_model.state_dict(), '/usr/local/airflow/models/best_model_f1_{:.8f}_{}.pth'.format(fscore, i))
 
+    upload_blob("islamophobia-models", best_model_path, best_model_path.split("/")[-1])
 
