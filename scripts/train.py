@@ -70,6 +70,7 @@ def train_epoch(epoch, model, data_loader, optimizer, scheduler):
     predictions, true_labels = [], []
 
     for i, (inputs, attns, labels) in enumerate(data_loader):
+      print("Training...." + str(i))
       inputs = inputs.to(device)
       attns = attns.to(device)
       labels = labels.to(device)
