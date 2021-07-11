@@ -133,7 +133,7 @@ if __name__ == "__main__":
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     # split train/test data
-    tweets_texts, tweets_labels = load_data("data/english-anot-shuffled.csv")
+    tweets_texts, tweets_labels = load_data("/usr/local/airflow/data/english-anot-shuffled.csv")
     X_train, X_test, y_train, y_test = train_test_split(tweets_texts, tweets_labels, test_size=0.1, random_state=42)
 
     train_inputs, train_masks = preprocessing_for_bert(X_train)
@@ -167,6 +167,6 @@ if __name__ == "__main__":
         if fscore > best_f1:
             best_f1 = fscore
             print("Model saved!")
-            torch.save(bert_model.state_dict(), 'best_model_f1_{:.8f}_{}.pth'.format(fscore, i))
+            torch.save(bert_model.state_dict(), '/usr/local/airflow/models/best_model_f1_{:.8f}_{}.pth'.format(fscore, i))
 
 
