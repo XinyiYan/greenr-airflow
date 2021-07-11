@@ -36,7 +36,7 @@ dag = DAG(
     default_args=default_args,
     catchup=False,
     description='A simple Machine Learning pipeline',
-    schedule_interval="@hourly",
+    schedule_interval="@weekly",
 )
 
 # instantiate tasks using Operators.
