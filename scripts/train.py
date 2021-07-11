@@ -69,16 +69,18 @@ def train_epoch(epoch, model, data_loader, optimizer, scheduler):
     running_loss = 0.0
     predictions, true_labels = [], []
 
-    for i, (inputs, attns, labels) in enumerate(data_loader):
-      print("Training...." + str(i))
+    for i, (inputs, attns, labels) in enumerate(data_loader):)
       inputs = inputs.to(device)
       attns = attns.to(device)
       labels = labels.to(device)
 
       optimizer.zero_grad()
+      print("Training....before model" + str(i))
       loss, logits = model(input_ids=inputs, attention_mask=attns, labels=labels).to_tuple()
       _, preds = torch.max(logits, dim=1)
       running_loss += loss.item()
+
+      print("Training....after model" + str(i))
 
       predictions.extend(preds.tolist())
       true_labels.extend(labels.tolist())
