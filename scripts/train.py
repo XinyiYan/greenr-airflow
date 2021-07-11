@@ -75,12 +75,9 @@ def train_epoch(epoch, model, data_loader, optimizer, scheduler):
       labels = labels.to(device)
 
       optimizer.zero_grad()
-      print("Training....before model" + str(i))
       loss, logits = model(input_ids=inputs, attention_mask=attns, labels=labels).to_tuple()
       _, preds = torch.max(logits, dim=1)
       running_loss += loss.item()
-
-      print("Training....after model" + str(i))
 
       predictions.extend(preds.tolist())
       true_labels.extend(labels.tolist())
@@ -90,7 +87,7 @@ def train_epoch(epoch, model, data_loader, optimizer, scheduler):
       optimizer.step()
       scheduler.step()
 
-      if i % 10 == 0:
+      if i % 100 == 0:
           print("Train batch:{}, loss:{}".format(i, loss))
 
     epoch_loss = running_loss / len(data_loader.dataset)
