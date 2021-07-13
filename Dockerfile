@@ -80,6 +80,7 @@ RUN pip install --upgrade google-cloud-storage
 RUN pip install -r requirements.txt
 COPY dags ${AIRFLOW_USER_HOME}/dags
 COPY data ${AIRFLOW_USER_HOME}/data
+COPY tokenizer ${AIRFLOW_USER_HOME}/tokenizer
 COPY scripts ${AIRFLOW_USER_HOME}/scripts
 COPY models ${AIRFLOW_USER_HOME}/models
 COPY keys ${AIRFLOW_USER_HOME}/keys

@@ -131,7 +131,8 @@ if __name__ == "__main__":
     batch_size = 8
     epochs = 4
 
-    bert_tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
+    print("Start loading tokenizer...")
+    bert_tokenizer = BertTokenizer.from_pretrained("/usr/local/airflow/tokenizer")
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("device: ", device)
 
