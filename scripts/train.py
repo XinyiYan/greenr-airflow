@@ -3,11 +3,11 @@ import pandas as pd
 import torch
 from torch.utils import data
 import torch.nn as nn
-from transformers import BertTokenizer, BertForSequenceClassification, AdamW, get_linear_schedule_with_warmup
+from transformers import BertConfig, BertTokenizer, BertForSequenceClassification, AdamW, get_linear_schedule_with_warmup
 from sklearn.metrics import classification_report, precision_recall_fscore_support
 from sklearn.model_selection import KFold, train_test_split
 from process_data import preprocess_text, get_text_processor
-from bucket_service import upload_blob
+from bucket_service import upload_blob, download_blob
 
 class textData(data.Dataset):
     def __init__(self, text, attens, labels=None):
@@ -70,6 +70,7 @@ def train_epoch(epoch, model, data_loader, optimizer, scheduler):
     running_loss = 0.0
     predictions, true_labels = [], []
 
+    print("Start training ...")
     for i, (inputs, attns, labels) in enumerate(data_loader):
       inputs = inputs.to(device)
       attns = attns.to(device)
@@ -132,6 +133,7 @@ if __name__ == "__main__":
 
     bert_tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print("device: ", device)
 
     # split train/test data
     tweets_texts, tweets_labels = load_data("/usr/local/airflow/data/english-anot-shuffled.csv")
@@ -151,9 +153,16 @@ if __name__ == "__main__":
     print('training batch size ',len(train_loader ))
     print('testing batch size', len(val_loader))
 
+    # Fetch model weights:
+    download_blob("islamophobia-models", "best_model_f1_0.96378421_0.pth", "/usr/local/airflow/models/best_model.pth")
+    print("Got model weights from bucket!")
+
     # initialize model
-    bert_model = BertForSequenceClassification.from_pretrained("bert-base-uncased", num_labels = 3, output_attentions=False, output_hidden_states=False)
+    configuration = BertConfig(num_labels=3)
+    bert_model = BertForSequenceClassification(configuration)
+    bert_model.load_state_dict(torch.load('/usr/local/airflow/models/best_model.pth'))
     bert_model = bert_model.to(device)
+    print("Loaded model weights!")
 
     total_steps = len(train_loader) * epochs
     warmup_steps = int(epochs * len(train_dataset) * 0.1 / batch_size)
