@@ -129,10 +129,10 @@ if __name__ == "__main__":
 
     # training parameter
     batch_size = 8
-    epochs = 4
+    epochs = 1
 
     print("Start loading tokenizer...")
-    bert_tokenizer = BertTokenizer.from_pretrained("/usr/local/airflow/tokenizer")
+    bert_tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("device: ", device)
 
@@ -169,6 +169,9 @@ if __name__ == "__main__":
     warmup_steps = int(epochs * len(train_dataset) * 0.1 / batch_size)
     optimizer = AdamW(bert_model.parameters(), lr=5e-5)
     scheduler = get_linear_schedule_with_warmup(optimizer = optimizer, num_warmup_steps = warmup_steps, num_training_steps = total_steps)
+
+    print("total_steps:", total_steps)
+    print("warmup_steps:", warmup_steps)
 
     best_f1 = 0.0
     best_model_path = ""
